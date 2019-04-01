@@ -7,7 +7,6 @@ if(params.help) {
 }
 
 
-
 process preprocess {
     // Pre-process Spectronaut protein quant matrix
     publishDir 'Results/preprocess'
@@ -21,13 +20,15 @@ process preprocess {
     
     """
     FNAME=\$(basename $spectronaut_prt_mtx_nrml .tsv)
-    Rscript preprocessor.r $spectronaut_prt_mtx_nrml
+    Rscript ${params.r_scripts_folder}/preprocessor.r $spectronaut_prt_mtx_nrml
     grep -f /usr/local/data/fmi_gene_list.txt *_preprocessor.tsv > \${FNAME}_preprocessor_fmi.tsv
     """
 }
 
+
 // Duplicate preprocesOut channel so we can feed it to two processes
 preprocesOut.into{ preprocesOut1 ; preprocesOut2 }
+
 
 process wordCloud {
     // Generates GO wordCoulds and tables
@@ -41,7 +42,7 @@ process wordCloud {
     file '*_wordcloud.png'
     
     """
-    Rscript GO.r $prt_mtx
+    Rscript ${params.r_scripts_folder}/plot_word_cloud.r $prt_mtx
     """
 }
 
@@ -58,7 +59,7 @@ process barPlot {
     file 'bar_plot*.png'
     
     """
-    Rscript bar_plot.r $prt_mtx
+    Rscript ${params.r_scripts_folder}/plot_bar.r $prt_mtx
     """
 }
 
