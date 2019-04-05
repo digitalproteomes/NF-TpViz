@@ -19,6 +19,7 @@ process preprocess {
     file '*_preprocessed.tsv' into preprocessOut
     
     """
+    sed -i 's|,|.|g' $spectronaut_prt_mtx_nrml
     Rscript ${params.r_scripts_folder}/preprocessor.r
     """
 }
