@@ -13,21 +13,35 @@ process preprocess {
     
     input:
     file spectronaut_prt_mtx_nrml from file("${params.data_folder}/*_Normalized_Protein_Report.tsv")
+    file spectronaut_pep_mtx_nrml from file("${params.data_folder}/*_Normalized_Peptides_Report.tsv")
 
     output:
-    file '*_preprocessor.tsv' into preprocessOut
-    file '*_preprocessor_fmi.tsv' into preprocessFmiOut
+    file '*_preprocessed.tsv' into preprocessOut
     
     """
-    FNAME=\$(basename $spectronaut_prt_mtx_nrml .tsv)
-    Rscript ${params.r_scripts_folder}/preprocessor.r $spectronaut_prt_mtx_nrml
-    grep -f /usr/local/data/fmi_gene_list.txt *_preprocessor.tsv > \${FNAME}_preprocessor_fmi.tsv
+    Rscript ${params.r_scripts_folder}/preprocessor.r
     """
 }
 
 
-// Duplicate preprocesOut channel so we can feed it to two processes
-preprocesOut.into{ preprocesOut1 ; preprocesOut2 }
+// Duplicate preprocesOut channel
+preprocessOut.into{ preprocessOut1 ; preprocessOut2 ; preprocessOut3 }
+
+
+process preprocess_fmi {
+    publishDir 'Results/preprocess'
+
+    input:
+    file spectronaut_preprocess from preprocessOut1
+
+    output:
+    file '*_preprocessed_fmi.tsv' into preprocessFmiOut
+    
+    """
+    python3 /usr/local/bin/preprocessor2fmi.py -i $spectronaut_preprocess
+    """
+}
+
 
 
 process wordCloud {
@@ -35,11 +49,11 @@ process wordCloud {
     publishDir 'Results/Plots'
     
     input:
-    file prt_mtx from preprocessOut1
+    file prt_mtx from preprocessOut2
 
     output:
-    file '*_wordcloud.tsv'
-    file '*_wordcloud.png'
+    file 'go_*.tsv'
+    file 'go_*.pdf'
     
     """
     Rscript ${params.r_scripts_folder}/plot_word_cloud.r $prt_mtx
@@ -52,11 +66,10 @@ process barPlot {
     publishDir 'Results/Plots'
     
     input:
-    file prt_mtx from preprocessOut2
+    file prt_mtx from preprocessOut3
 
     output:
-    file 'bar_plot*.tsv'
-    file 'bar_plot*.png'
+    file 'barplot*.pdf'
     
     """
     Rscript ${params.r_scripts_folder}/plot_bar.r $prt_mtx
