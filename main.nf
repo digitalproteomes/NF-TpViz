@@ -70,7 +70,7 @@ process barPlot {
     file prt_mtx from preprocessOut3
 
     output:
-    file 'barplot*.pdf'
+    file '*barplot*.pdf'
     
     """
     Rscript ${params.r_scripts_folder}/plot_bar.r $prt_mtx
