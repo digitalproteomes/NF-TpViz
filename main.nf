@@ -57,7 +57,7 @@ process wordCloud {
     file 'go_*.pdf'
     
     """
-    Rscript ${params.r_scripts_folder}/plot_word_cloud.r $prt_mtx ${params.sample_type}
+    Rscript ${params.r_scripts_folder}/plot_word_cloud.r $prt_mtx 
     """
 }
 
@@ -73,7 +73,7 @@ process barPlot {
     file '*barplot*.pdf'
     
     """
-    Rscript ${params.r_scripts_folder}/plot_bar.r $prt_mtx
+    Rscript ${params.r_scripts_folder}/plot_bar.r $prt_mtx ${params.sample_type}
     """
 }
 
