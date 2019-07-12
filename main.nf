@@ -45,21 +45,21 @@ process preprocess_fmi {
 
 
 
-process wordCloud {
-    // Generates GO wordCoulds and tables
-    publishDir 'Results/Plots'
+// process wordCloud {
+//     // Generates GO wordCoulds and tables
+//     publishDir 'Results/Plots'
     
-    input:
-    file prt_mtx from preprocessOut2
+//     input:
+//     file prt_mtx from preprocessOut2
 
-    output:
-    file 'go_*.tsv'
-    file 'go_*.pdf'
+//     output:
+//     file 'go_*.tsv'
+//     file 'go_*.pdf'
     
-    """
-    Rscript ${params.r_scripts_folder}/plot_word_cloud.r $prt_mtx
-    """
-}
+//     """
+//     Rscript ${params.r_scripts_folder}/plot_word_cloud.r $prt_mtx
+//     """
+//}
 
 
 process barPlot {
