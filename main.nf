@@ -56,18 +56,10 @@ process preprocess_fmi {
 //     file 'go_*.tsv'
 //     file 'go_*.pdf'
     
-<<<<<<< HEAD
 //     """
 //     Rscript ${params.r_scripts_folder}/plot_word_cloud.r $prt_mtx
 //     """
 //}
-=======
-    """
-    Rscript ${params.r_scripts_folder}/plot_word_cloud.r $prt_mtx 
-    """
-}
->>>>>>> origin/master
-
 
 process barPlot {
     // Generates barCharts and tables
