@@ -6,12 +6,30 @@ if(params.help) {
     exit 1
 }
 
+
+process qc_input {
+    // Make sure the input protein matrix meets out QC expectations
+    input:
+    file spectronaut_phrt_mtx_nrml from file("${params.data_folder}/*_Normalized_Protein_Report.tsv")
+
+    output:
+    val true into qcInputOut
+    
+    """
+    sed -i 's|,|.|g' $spectronaut_phrt_mtx_nrml
+    python /usr/local/bin/tpviz_input_qc.py -i $spectronaut_phrt_mtx_nrml \
+    -r $params.ref_start $params.ref_end \
+    -s $params.smpl_start $params.smpl_end
+    """
+}
+
  
 process preprocess {
     // Pre-process Spectronaut protein quant matrix
     publishDir 'Results/preprocess', mode: 'link'
     
     input:
+    val flag from qcInputOut
     file spectronaut_phrt_mtx_nrml from file("${params.data_folder}/*_Normalized_Protein_Report.tsv")
 
     output:
