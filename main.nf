@@ -7,7 +7,7 @@ if(params.help) {
 }
 
 
-process qc_input {
+process qcInput {
     // Make sure the input protein matrix meets out QC expectations
     input:
     file spectronaut_phrt_mtx_nrml from file("${params.data_folder}/*_Normalized_Protein_Report.tsv")
@@ -53,7 +53,7 @@ process preprocess {
 preprocessOut.into{ preprocessOut1 ; preprocessOut2 ; preprocessOut3 }
 
 
-process preprocess_fmi {
+process preprocessFmi {
     publishDir 'Results/preprocess', mode: 'link'
 
     input:
@@ -99,4 +99,3 @@ process proteoFmi {
     plot_proteo_fmi_table.py -i $prt_mtx
     """
 }
-
