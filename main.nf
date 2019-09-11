@@ -9,18 +9,24 @@ if(params.help) {
  
 process preprocess {
     // Pre-process Spectronaut protein quant matrix
-    publishDir 'Results/preprocess'
+    publishDir 'Results/preprocess', mode: 'link'
     
     input:
-    file spectronaut_prt_mtx_nrml from file("${params.data_folder}/*_Normalized_Protein_Report.tsv")
-    file spectronaut_pep_mtx_nrml from file("${params.data_folder}/*_Normalized_Peptides_Report.tsv")
+    file spectronaut_phrt_mtx_nrml from file("${params.data_folder}/*_Normalized_Protein_Report.tsv")
 
     output:
+    file '*_cleaned.tsv'
     file '*_preprocessed.tsv' into preprocessOut
     
     """
-    sed -i 's|,|.|g' $spectronaut_prt_mtx_nrml
-    Rscript ${params.r_scripts_folder}/preprocessor.r
+    sed -i 's|,|.|g' $spectronaut_phrt_mtx_nrml
+    input_name=$spectronaut_phrt_mtx_nrml
+    output_name=\${input_name%_Normalized_Protein_Report.tsv}
+    python /usr/local/bin/preprocessor.py -i $spectronaut_phrt_mtx_nrml \
+    -o \$output_name  \
+    -r $params.ref_start $params.ref_end \
+    -s $params.smpl_start $params.smpl_end \
+    -g /usr/local/data/uniprotEntry2Gene
     """
 }
 
@@ -30,7 +36,7 @@ preprocessOut.into{ preprocessOut1 ; preprocessOut2 ; preprocessOut3 }
 
 
 process preprocess_fmi {
-    publishDir 'Results/preprocess'
+    publishDir 'Results/preprocess', mode: 'link'
 
     input:
     file spectronaut_preprocess from preprocessOut1
@@ -45,25 +51,9 @@ process preprocess_fmi {
 
 
 
-// process wordCloud {
-//     // Generates GO wordCoulds and tables
-//     publishDir 'Results/Plots'
-    
-//     input:
-//     file prt_mtx from preprocessOut2
-
-//     output:
-//     file 'go_*.tsv'
-//     file 'go_*.pdf'
-    
-//     """
-//     Rscript ${params.r_scripts_folder}/plot_word_cloud.r $prt_mtx
-//     """
-//}
-
 process barPlot {
     // Generates barCharts and tables
-    publishDir 'Results/Plots'
+    publishDir 'Results/Plots', mode: 'link'
     
     input:
     file prt_mtx from preprocessOut3
@@ -79,7 +69,7 @@ process barPlot {
 
 process proteoFmi {
     // Generates proteomics FMI table
-    publishDir 'Results/Plots'
+    publishDir 'Results/Plots', mode: 'link'
     
     input:
     file prt_mtx from preprocessFmiOut
