@@ -42,6 +42,7 @@ process preprocess {
     
     """
     sed -i 's|,|.|g' $spectronaut_phrt_mtx_nrml
+    sed -i 's|Filtered|NaN|g' $spectronaut_phrt_mtx_nrml
     input_name=$spectronaut_phrt_mtx_nrml
     output_name=\${input_name%_Normalized_Protein_Report.tsv}
     python /usr/local/bin/preprocessor.py -i $spectronaut_phrt_mtx_nrml \
