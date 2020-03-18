@@ -129,7 +129,7 @@ process plotBoxPlot {
         -o \$output_name  \
         -r $params.ref_start $params.ref_end \
         -s $params.smpl_start $params.smpl_end \
-        -m /usr/local/data/Melanoma_marker_Anja_IDs.csv
+        -m /usr/local/data/Melanoma_marker_IDs.csv
         """
     else if( params.sample_type == 'OVCA' )
     	"""
